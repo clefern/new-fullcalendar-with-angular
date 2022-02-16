@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { reminderReducer } from './store/reducers/reminder.reducer';
+
 
 
 @NgModule({
@@ -12,8 +17,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
+    StoreModule.forRoot({
+      reminderReducer
+    }),
+
     BrowserAnimationsModule,
+    MatNativeDateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

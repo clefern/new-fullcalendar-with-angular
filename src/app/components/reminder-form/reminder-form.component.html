@@ -1,1 +1,41 @@
-<p>Reminder form will be here :)</p>
+
+<div class="reminder-form">
+  <form class="reminder-form__form"
+    [formGroup]="reminderForm"
+    (submit)="onSubmitReminder()"
+  >
+
+    <h2 class="">Reminder Form</h2>
+
+    <mat-form-field class="reminder-form__field" appearance="fill">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="text">
+    </mat-form-field>
+
+    <mat-form-field class="reminder-form__field" appearance="fill">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dateTime">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="reminder-form__field" appearance="fill">
+      <mat-label>Color</mat-label>
+      <input matInput formControlName="color" type="color">
+    </mat-form-field>
+
+    <mat-form-field class="reminder-form__field" appearance="fill">
+      <mat-label>City</mat-label>
+      <input matInput formControlName="city">
+    </mat-form-field>
+
+    <button mat-raised-button
+      color="primary"
+      [disabled]="reminderForm.invalid"
+    >
+      Save
+    </button>
+
+  </form>
+
+</div>

@@ -9,5 +9,12 @@
  </button>
 </mat-toolbar>
 
-<!-- Create the calendar here -->
-<!-- ======================== -->
+<div class="calendar__content">
+  <ng-container *ngIf="reminder$ | async"></ng-container>
+
+  <full-calendar #calendar
+    [options]="calendarOptions"
+    (eventClick)="teste($event)"
+  ></full-calendar>
+
+</div>

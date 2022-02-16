@@ -1,0 +1,16 @@
+@mixin reminderForm() {
+  width: 300px;
+}
+
+@mixin reminderFormField() {
+  width: 100%;
+}
+
+.reminder-form {
+  @include reminderForm();
+  &__form {
+  }
+  &__field {
+    @include reminderFormField();
+  }
+}
