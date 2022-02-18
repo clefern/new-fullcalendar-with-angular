@@ -6,18 +6,23 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { StoreModule } from '@ngrx/store';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [ReminderFormComponent],
   exports: [ReminderFormComponent],
   imports: [
     CommonModule,
+    FullCalendarModule,
     ReactiveFormsModule,
     FormsModule,
     MatInputModule,
     MatButtonModule,
     MatDividerModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    StoreModule,
+
   ]
 })
 export class ReminderFormModule { }

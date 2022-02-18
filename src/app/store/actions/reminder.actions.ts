@@ -1,20 +1,31 @@
 import { Action } from '@ngrx/store';
+import { Reminder } from 'src/app/interfaces/reminder';
 
 
 export class SetReminder implements Action {
-  readonly type = ReminderActions.SET_REMINDER;
+  readonly type = ReminderActionTypes.SET_REMINDER;
+  constructor(public payload: Reminder) { }
 }
 
 export class UpdateReminder implements Action {
-  readonly type = ReminderActions.UPDATE_REMINDER;
+  readonly type = ReminderActionTypes.UPDATE_REMINDER;
+  constructor(public payload: Reminder) { }
 }
 
 export class CleanReminder implements Action {
-  readonly type = ReminderActions.CLEAN_REMINDER;
+  readonly type = ReminderActionTypes.CLEAN_REMINDER;
 }
 
-export enum ReminderActions {
-  SET_REMINDER = 'Set Reminder',
-  UPDATE_REMINDER = 'Update Reminder',
-  CLEAN_REMINDER = 'Clean Reminder'
+export class UpdateListReminder implements Action {
+  readonly type = ReminderActionTypes.LIST_REMINDER;
+  constructor(public payload: Reminder[]) { }
 }
+
+export enum ReminderActionTypes {
+  SET_REMINDER = '[Reminder] load',
+  UPDATE_REMINDER = '[Reminder] Update',
+  CLEAN_REMINDER = '[Reminder] Clean',
+  LIST_REMINDER = '[Reminder] Update List',
+}
+
+export type ReminderActions = SetReminder | UpdateReminder | CleanReminder | UpdateListReminder;

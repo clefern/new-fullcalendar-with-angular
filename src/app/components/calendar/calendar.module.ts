@@ -8,6 +8,8 @@ import { ReminderFormComponent } from '../reminder-form/reminder-form.component'
 import { ReminderFormModule } from '../reminder-form/reminder-form.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
+import { StoreModule } from '@ngrx/store';
+import { CalendarMapperService } from './services/calendar-mapper.service';
 
 FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   dayGridPlugin,
@@ -20,7 +22,11 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     CalendarRoutingModule,
     SharedModule,
     ReminderFormModule,
-    FullCalendarModule
+    FullCalendarModule,
+    StoreModule
+  ],
+  providers: [
+    CalendarMapperService
   ],
   entryComponents: [ReminderFormComponent],
 })

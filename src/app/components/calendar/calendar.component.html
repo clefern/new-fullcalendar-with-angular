@@ -4,17 +4,18 @@
   </button>
   <span>Jobsity challenge</span>
   <span class="spacer"></span>
-  <button mat-button (click)="openReminderForm()">
+  <button mat-button (click)="_mapper.openReminderForm()">
    <mat-icon>add</mat-icon> New reminder
  </button>
 </mat-toolbar>
 
 <div class="calendar__content">
   <ng-container *ngIf="reminder$ | async"></ng-container>
+  <ng-container *ngIf="reminderList$ | async"></ng-container>
+  <ng-container *ngIf="loader$ | async"></ng-container>
 
   <full-calendar #calendar
-    [options]="calendarOptions"
-    (eventClick)="teste($event)"
+    [options]="settings?.options"
   ></full-calendar>
 
 </div>

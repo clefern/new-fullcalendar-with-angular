@@ -1,6 +1,9 @@
 export interface Reminder {
+  reminderId: string;
+  title?: string;
   text: string;
-  dateTime: Date;
+  date: Date | string;
+  time?: string;
   color: string;
   city?: string;
 }

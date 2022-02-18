@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EventApi } from '@fullcalendar/common';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
 import { Reminder } from '../interfaces/reminder';
 import { ApplicationStore } from '../store/models/store.interfaces';
 import * as reminder from '../store/actions/reminder.actions';
@@ -14,29 +12,28 @@ export class CalendarService {
   reminders: Reminder[] = [];
 
   constructor(
-    private readonly _store: Store<ApplicationStore>
+    private readonly _store: Store<ApplicationStore>,
   ) { }
 
-  create(data: Reminder): Reminder {
-    return data;
+  create(data: Reminder): void {
+    this.reminders.push(data);
+    this._store.dispatch(new reminder.UpdateListReminder(this.reminders))
   }
 
-  edit(data: Reminder): Reminder {
-    // const eventApi: EventApi = this._store.
-    return data;
+  edit(newReminder: Reminder): void {
+    let list: Reminder[] = this.reminders?.filter(item => item.reminderId != newReminder.reminderId);
+    list.push(newReminder);
+    this._store.dispatch(new reminder.UpdateListReminder(list))
   }
 
-  list(date: Date): Observable<Reminder[]> {
-    console.log(date);
-    return of(this.reminders);
+  setList(reminders: Reminder[]): void {
+    this.reminders = reminders;
+    this._store.dispatch(new reminder.UpdateListReminder(reminders));
   }
 
-  delete(reminderId: string): boolean {
-    console.log(reminderId);
-    return true;
-  }
-
-  setEventApi(event: EventApi): void {
-    this._store.dispatch(new reminder.SetReminder())
+  delete(reminderId: string): void {
+    let list: Reminder[] = this.reminders?.filter(item => item.reminderId != reminderId);
+    this.reminders = list;
+    this._store.dispatch(new reminder.UpdateListReminder(list))
   }
 }

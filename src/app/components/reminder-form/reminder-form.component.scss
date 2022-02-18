@@ -6,11 +6,28 @@
   width: 100%;
 }
 
+@mixin reminderFormBtns() {
+  display: flex;
+  justify-content: space-between;
+}
+
+@mixin reminderFormActions() {
+  button:first-child {
+    margin-right: 10px;
+  }
+}
+
 .reminder-form {
   @include reminderForm();
   &__form {
   }
   &__field {
     @include reminderFormField();
+  }
+  &__btns {
+    @include reminderFormBtns();
+  }
+  &__actions {
+    @include reminderFormActions();
   }
 }

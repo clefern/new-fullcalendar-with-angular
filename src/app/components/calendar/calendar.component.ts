@@ -1,107 +1,80 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
 import { Reminder } from 'src/app/interfaces/reminder';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { WeatherService } from 'src/app/services/weather.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ReminderFormComponent } from '../reminder-form/reminder-form.component';
-import { CalendarOptions, EventAddArg, EventApi, FullCalendarComponent } from '@fullcalendar/angular';
-import { ApplicationStore, ReminderState } from 'src/app/store/models/store.interfaces';
+import { FullCalendarComponent } from '@fullcalendar/angular';
+import { ApplicationStore, LoaderState } from 'src/app/store/models/store.interfaces';
 import { Store } from '@ngrx/store';
-import { getReminderState } from 'src/app/store/reducers/app.reducer';
-
+import { getLoaderState } from 'src/app/store/reducers/app.reducer';
+import { CalendarMapperService } from './services/calendar-mapper.service';
+import { CalendarSettings } from './models/calendar-settings.interface';
+import { CalendarObservablesService } from './services/calendar-observables.service';
+import { ReminderMapperService } from '../reminder-form/services/reminder-mapper.service';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent implements OnInit, OnDestroy {
+export class CalendarComponent implements OnInit, AfterViewInit {
 
-  onDestroy$ = new Subject<boolean>();
+  settings: CalendarSettings;
 
-  calendarOptions: CalendarOptions = {
-    initialView: 'dayGridMonth',
-    editable: true,
-    droppable: true,
-    selectable: true,
-    eventClick: this.handleEventClick.bind(this), // bind is important!
-    // dateClick: this.handleDateClick.bind(this), // bind is important!
-    events: [
-      { title: 'E V E N T    1', date: '2022-02-12', color: '#34fd56', city: 'São Paulo' },
-      { title: 'E V E N T    2', date: '2022-02-12', color: '#34fd56', city: 'São Paulo'  },
-    ]
-  };
-  @ViewChild('calendar') calendarComponent: FullCalendarComponent;
-  reminder$: Observable<ReminderState>;
+  @ViewChild('calendar') calendar: FullCalendarComponent;
+  reminderList$: Observable<Reminder[]>;
+  reminder$: Observable<Reminder[]>;
+  loader$: Observable<LoaderState>;
 
   constructor(
     private calendarService: CalendarService,
     private weatherService: WeatherService,
-    private matDialog: MatDialog,
-    private readonly _store: Store<ApplicationStore>
+    private readonly _store: Store<ApplicationStore>,
+    public readonly _mapper: CalendarMapperService,
+    public readonly _observable: CalendarObservablesService,
+    private readonly _reminderMapper: ReminderMapperService
   ) { }
 
   ngOnInit(): void {
-    this.reminder$ = this._store.select(getReminderState);
-    this.calendarService.list(new Date())
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((reminders: Reminder[]) => {
-        reminders.map((reminder: Reminder) => {
-          return {
-            ...reminder,
-            weather: this.getWeather(reminder.city),
-          };
-        });
-        console.log(reminders);
-      });
+    // this.calendarService.list(new Date())
+    //   .subscribe((reminders: Reminder[]) => {
+    //     reminders.map((reminder: Reminder) => {
+    //       return {
+    //         ...reminder,
+    //         weather: this.getWeather(reminder.city),
+    //       };
+    //     });
+    //     console.log(reminders);
+    //   });
+  }
+
+  ngAfterViewInit(): void {
+    this.reminderState$();
+    this.loaderState$();
+    this.reminderList$ = this._observable.reminders$().pipe(
+      tap((list: Reminder[]) => this.calendarService.setList(list))
+    );
+  }
+
+  reminderState$(): void {
+    this.reminder$ = this._observable.remindersState$().pipe(
+      filter(val => !!val),
+      map((reminders) => this._reminderMapper.mapArrayToDisplay(reminders)),
+      tap(list => this.settings = this._mapper.mapSettings(list))
+    )
+  }
+
+  loaderState$(): void {
+    this.loader$ = this._store.select(getLoaderState).pipe(
+      tap((loader) => console.log({loader}))
+    );
   }
 
   getWeather(city: string) {
     const x = this.weatherService.getWeatherInformation(city);
     console.log(x);
     return x;
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next(true);
-    this.onDestroy$.complete();
-  }
-
-  openReminderForm(reminder?: Reminder) {
-    this.matDialog.open(ReminderFormComponent, {
-      data: {
-        ...reminder
-      },
-    });
-  }
-
-  handleEventClick(arg) {
-    const eventApi: EventApi = arg.event;
-    console.log(eventApi.extendedProps);
-
-    const reminder: Reminder = {
-      text: eventApi.title,
-      dateTime: eventApi.start,
-      color: eventApi.backgroundColor,
-      city: eventApi.extendedProps.city
-    };
-    this.calendarService.setEventApi(eventApi);
-    this.openReminderForm(reminder)
-  }
-
-  handleDateClick(arg: EventAddArg) {
-    console.log({arg})
-  }
-
-  toggleWeekends() {
-    this.calendarOptions.weekends = !this.calendarOptions.weekends // toggle the boolean!
-  }
-
-  teste(what) {
-    console.log(what);
-
   }
 
 }
